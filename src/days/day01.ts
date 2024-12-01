@@ -1,4 +1,4 @@
-import { sumArray } from '../arrayMethods';
+import { sortArray, sumArray } from '../arrayMethods';
 
 export const getPartOneSolution = (input: string): string => {
   const { left, right } = parseInput(input);
@@ -23,5 +23,5 @@ const parseInput = (input: string): { left: Array<number>; right: Array<number> 
     right.push(parseInt(split[1], 10));
   }
 
-  return { left: left.sort(), right: right.sort() };
+  return { left: sortArray(left), right: sortArray(right) };
 };
