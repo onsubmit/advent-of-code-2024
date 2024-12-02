@@ -11,11 +11,14 @@ const splitLines = memoizee(
 
 export const inputTo2dArray = <T, TValue extends string = string>(
   input: string,
+  columnSplitter: string,
   mapper: (character: TValue, row: number, column: number) => T,
   options: { retainEmptyLines: boolean } = { retainEmptyLines: false }
 ): Array<Array<T>> => {
   const lines = splitLines(input, options);
   return lines.map<T[]>((line, row) =>
-    [...line].map<T>((character, column) => mapper(character as TValue, row, column))
+    line
+      .split(columnSplitter)
+      .map<T>((character, column) => mapper(character as TValue, row, column))
   );
 };
