@@ -1,15 +1,13 @@
-import { sortArray, sumArray } from '../arrayMethods';
+import { sortArray, sumArrayBy } from '../arrayMethods';
 
 export const getPartOneSolution = (input: string): string => {
   const { left, right } = parseInput(input);
-  const distances = left.map((v, i) => Math.abs(v - right[i]));
-  return sumArray(distances).toString();
+  return sumArrayBy(left, (l, i) => Math.abs(l - right[i])).toString();
 };
 
 export const getPartTwoSolution = (input: string): string => {
   const { left, right } = parseInput(input);
-  const scores = left.map((v) => v * right.filter((r) => r === v).length);
-  return sumArray(scores).toString();
+  return sumArrayBy(left, (l) => l * right.filter((r) => r === l).length).toString();
 };
 
 const parseInput = (input: string): { left: Array<number>; right: Array<number> } => {

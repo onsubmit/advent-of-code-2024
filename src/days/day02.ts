@@ -1,9 +1,9 @@
-import { countWhere } from '../arrayMethods';
+import { countArrayBy } from '../arrayMethods';
 import { inputTo2dArray } from '../inputHelper';
 
 export const getPartOneSolution = (input: string): string => {
   const array = inputTo2dArray(input, ' ', (char) => parseInt(char, 10));
-  return countWhere(array, isLineSafePartOne).toString();
+  return countArrayBy(array, isLineSafePartOne).toString();
 };
 
 const isLineSafePartOne = (line: Array<number>): boolean => {
@@ -25,7 +25,7 @@ const isLineSafePartOne = (line: Array<number>): boolean => {
 
 export const getPartTwoSolution = (input: string): string => {
   const array = inputTo2dArray(input, ' ', (char) => parseInt(char, 10));
-  return countWhere(array, isLineSafePartTwo).toString();
+  return countArrayBy(array, isLineSafePartTwo).toString();
 };
 
 const isLineSafePartTwo = (line: Array<number>): boolean => {
