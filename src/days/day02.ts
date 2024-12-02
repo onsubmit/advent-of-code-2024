@@ -24,15 +24,7 @@ const isLineSafe = (line: Array<number>): boolean => {
   for (let i = 0; i < line.length - 1; i++) {
     const delta = isDecreasing ? line[i] - line[i + 1] : line[i + 1] - line[i];
 
-    if (delta === 0) {
-      return false;
-    }
-
-    if (delta < 0) {
-      return false;
-    }
-
-    if (delta > 3) {
+    if (delta <= 0 || delta > 3) {
       return false;
     }
   }
@@ -42,5 +34,33 @@ const isLineSafe = (line: Array<number>): boolean => {
 
 export const getPartTwoSolution = (input: string): string => {
   const lines = input.split('\n').filter(Boolean);
-  return lines.toString();
+  const array: Array<Array<number>> = [];
+  for (const line of lines) {
+    array.push(line.split(' ').map((v) => parseInt(v, 10)));
+  }
+
+  let safeLines = 0;
+  for (let r = 0; r < array.length; r++) {
+    if (isLineSafePart2(array[r])) {
+      safeLines++;
+    }
+  }
+
+  return safeLines.toString();
+};
+
+const isLineSafePart2 = (line: Array<number>): boolean => {
+  if (isLineSafe(line)) {
+    return true;
+  }
+
+  for (let i = 0; i < line.length; i++) {
+    const temp = [...line];
+    temp.splice(i, 1);
+    if (isLineSafe(temp)) {
+      return true;
+    }
+  }
+
+  return false;
 };
