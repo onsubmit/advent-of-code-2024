@@ -51,7 +51,10 @@ function getDayPanelProps(
 export default function App() {
   const [value, setValue] = useState(getCurrentDayIndex() ?? 0);
 
-  const DayComponents = [lazy(() => import('./components/day01'))];
+  const DayComponents = [
+    lazy(() => import('./components/day02')),
+    lazy(() => import('./components/day01')),
+  ];
 
   return (
     <Box
