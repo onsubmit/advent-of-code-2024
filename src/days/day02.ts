@@ -1,21 +1,10 @@
 export const getPartOneSolution = (input: string): string => {
-  const lines = input.split('\n').filter(Boolean);
-  const array: Array<Array<number>> = [];
-  for (const line of lines) {
-    array.push(line.split(' ').map((v) => parseInt(v, 10)));
-  }
-
-  let safeLines = 0;
-  for (let r = 0; r < array.length; r++) {
-    if (isLineSafe(array[r])) {
-      safeLines++;
-    }
-  }
-
+  const array = parseInput(input);
+  const safeLines = array.filter((line) => isLineSafePartOne(line)).length;
   return safeLines.toString();
 };
 
-const isLineSafe = (line: Array<number>): boolean => {
+const isLineSafePartOne = (line: Array<number>): boolean => {
   if (line[0] === line[1]) {
     return false;
   }
@@ -33,34 +22,33 @@ const isLineSafe = (line: Array<number>): boolean => {
 };
 
 export const getPartTwoSolution = (input: string): string => {
-  const lines = input.split('\n').filter(Boolean);
-  const array: Array<Array<number>> = [];
-  for (const line of lines) {
-    array.push(line.split(' ').map((v) => parseInt(v, 10)));
-  }
-
-  let safeLines = 0;
-  for (let r = 0; r < array.length; r++) {
-    if (isLineSafePart2(array[r])) {
-      safeLines++;
-    }
-  }
-
+  const array = parseInput(input);
+  const safeLines = array.filter((line) => isLineSafePartTwo(line)).length;
   return safeLines.toString();
 };
 
-const isLineSafePart2 = (line: Array<number>): boolean => {
-  if (isLineSafe(line)) {
+const isLineSafePartTwo = (line: Array<number>): boolean => {
+  if (isLineSafePartOne(line)) {
     return true;
   }
 
   for (let i = 0; i < line.length; i++) {
     const temp = [...line];
     temp.splice(i, 1);
-    if (isLineSafe(temp)) {
+    if (isLineSafePartOne(temp)) {
       return true;
     }
   }
 
   return false;
+};
+
+const parseInput = (input: string): Array<Array<number>> => {
+  const lines = input.split('\n').filter(Boolean);
+  const array: Array<Array<number>> = [];
+  for (const line of lines) {
+    array.push(line.split(' ').map((v) => parseInt(v, 10)));
+  }
+
+  return array;
 };
