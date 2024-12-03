@@ -1,7 +1,9 @@
+import { countArrayBy } from '../arrayMethods';
+import { inputTo2dArray } from '../inputHelper';
+
 export const getPartOneSolution = (input: string): string => {
-  const array = parseInput(input);
-  const safeLines = array.filter((line) => isLineSafePartOne(line)).length;
-  return safeLines.toString();
+  const array = inputTo2dArray(input, ' ', (char) => parseInt(char, 10));
+  return countArrayBy(array, isLineSafePartOne).toString();
 };
 
 const isLineSafePartOne = (line: Array<number>): boolean => {
@@ -22,9 +24,8 @@ const isLineSafePartOne = (line: Array<number>): boolean => {
 };
 
 export const getPartTwoSolution = (input: string): string => {
-  const array = parseInput(input);
-  const safeLines = array.filter((line) => isLineSafePartTwo(line)).length;
-  return safeLines.toString();
+  const array = inputTo2dArray(input, ' ', (char) => parseInt(char, 10));
+  return countArrayBy(array, isLineSafePartTwo).toString();
 };
 
 const isLineSafePartTwo = (line: Array<number>): boolean => {
@@ -41,14 +42,4 @@ const isLineSafePartTwo = (line: Array<number>): boolean => {
   }
 
   return false;
-};
-
-const parseInput = (input: string): Array<Array<number>> => {
-  const lines = input.split('\n').filter(Boolean);
-  const array: Array<Array<number>> = [];
-  for (const line of lines) {
-    array.push(line.split(' ').map((v) => parseInt(v, 10)));
-  }
-
-  return array;
 };
