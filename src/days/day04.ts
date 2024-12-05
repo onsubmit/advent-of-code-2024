@@ -20,7 +20,19 @@ export const getPartOneSolution = (input: string): string => {
 };
 
 export const getPartTwoSolution = (input: string): string => {
-  return '';
+  const matrix = inputTo2dArray(input, '', (char) => char);
+  const rows = matrix.length;
+  const columns = matrix[0].length;
+
+  let sum = 0;
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < columns; c++) {
+      const found = findMasInXShapeAt(matrix, r, c);
+      sum += found;
+    }
+  }
+
+  return sum.toString();
 };
 
 const findXmasAt = (matrix: Array<Array<string>>, row: number, column: number): number => {
@@ -49,6 +61,28 @@ const findXmasAt = (matrix: Array<Array<string>>, row: number, column: number): 
   }
 
   return found;
+};
+
+const findMasInXShapeAt = (matrix: Array<Array<string>>, row: number, column: number): number => {
+  if (matrix[row]?.[column] !== 'A') {
+    return 0;
+  }
+
+  const nw = getCoordinatesInDirection(row, column, 'NW');
+  const ne = getCoordinatesInDirection(row, column, 'NE');
+  const sw = getCoordinatesInDirection(row, column, 'SW');
+  const se = getCoordinatesInDirection(row, column, 'SE');
+
+  const line1 = [matrix[nw.row]?.[nw.column], matrix[se.row]?.[se.column]];
+  const line2 = [matrix[ne.row]?.[ne.column], matrix[sw.row]?.[sw.column]];
+  line1.sort();
+  line2.sort();
+
+  if (line1.join('') === 'MS' && line2.join('') === 'MS') {
+    return 1;
+  }
+
+  return 0;
 };
 
 const getCoordinatesInDirection = (
