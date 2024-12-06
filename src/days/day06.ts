@@ -84,8 +84,76 @@ const move = (c: Coordinate, direction: Direction): Coordinate => {
   }
 };
 
+const pathChars = ['|', '-', '+'] as const;
+type PathChar = (typeof pathChars)[number];
+
 export const getPartTwoSolution = (input: string): string => {
   const lines = input.split('\n');
+  const map: Array<Array<string>> = [];
 
-  return '';
+  const originalGuard: Coordinate = { row: -1, column: -1 };
+  for (let row = 0; row < lines.length; row++) {
+    const chars = [...lines[row]];
+    map.push(chars);
+
+    const guardCol = chars.indexOf('^');
+    if (guardCol >= 0) {
+      originalGuard.row = row;
+      originalGuard.column = guardCol;
+    }
+  }
+
+  function isValidCoordinate(c: Coordinate): boolean {
+    if (c.row < 0 || c.column < 0) {
+      return false;
+    }
+
+    if (c.row >= map.length || c.column >= map[c.row].length) {
+      return false;
+    }
+
+    return true;
+  }
+
+  let loops = 0;
+  for (let r = 0; r < map.length; r++) {
+    console.log(r);
+    for (let c = 0; c < map[r].length; c++) {
+      const m = [...map].map((x) => [...x]);
+      if (m[r][c] !== '.') {
+        continue;
+      }
+
+      m[r][c] = '#';
+
+      let guard = { ...originalGuard };
+      const path: Map<string, Direction> = new Map();
+      path.set(`${guard.row},${guard.column}`, 'N');
+
+      let directionIndex = 0;
+      while (isValidCoordinate(guard)) {
+        let direction = directions[directionIndex % directions.length];
+        let next = move(guard, direction);
+        if (!isValidCoordinate(next)) {
+          break;
+        }
+
+        while (m[next.row][next.column] === '#') {
+          direction = directions[++directionIndex % directions.length];
+          next = move(guard, direction);
+        }
+
+        guard = next;
+        if (path.get(`${guard.row},${guard.column}`) === direction) {
+          loops++;
+          break;
+        }
+
+        path.set(`${guard.row},${guard.column}`, direction);
+        m[guard.row][guard.column] = 'X';
+      }
+    }
+  }
+
+  return loops.toString();
 };
