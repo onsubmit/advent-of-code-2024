@@ -84,9 +84,6 @@ const move = (c: Coordinate, direction: Direction): Coordinate => {
   }
 };
 
-const pathChars = ['|', '-', '+'] as const;
-type PathChar = (typeof pathChars)[number];
-
 export const getPartTwoSolution = (input: string): string => {
   const lines = input.split('\n');
   const map: Array<Array<string>> = [];
