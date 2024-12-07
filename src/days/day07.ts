@@ -5,8 +5,26 @@ type Line = {
   equation: Array<number>;
 };
 
+type Operator = '+' | '*' | '||';
+
 export const getPartOneSolution = (input: string): string => {
-  const lines: Array<Line> = input.split('\n').map((line) => {
+  const lines = getLines(input);
+  const operators = new Set<Operator>(['+', '*']);
+  const possiblyTrueEquations = lines.filter((line) => isPossiblyTrue(line, operators));
+  const totalCalibrationResult = sumArrayBy(possiblyTrueEquations, (equation) => equation.value);
+  return totalCalibrationResult.toString();
+};
+
+export const getPartTwoSolution = (input: string): string => {
+  const lines = getLines(input);
+  const operators = new Set<Operator>(['+', '*', '||']);
+  const possiblyTrueEquations = lines.filter((line) => isPossiblyTrue(line, operators));
+  const totalCalibrationResult = sumArrayBy(possiblyTrueEquations, (equation) => equation.value);
+  return totalCalibrationResult.toString();
+};
+
+const getLines = (input: string): Array<Line> => {
+  return input.split('\n').map((line) => {
     const split = line.split(':').map((v) => v.trim());
     const value = parseInt(split[0], 10);
     const equation = split[1].split(' ').map((v) => parseInt(v, 10));
@@ -15,14 +33,10 @@ export const getPartOneSolution = (input: string): string => {
       equation,
     };
   });
-
-  const possiblyTrueEquations = lines.filter((line) => isPossiblyTrue(line));
-  const totalCalibrationResult = sumArrayBy(possiblyTrueEquations, (equation) => equation.value);
-  return totalCalibrationResult.toString();
 };
 
-const isPossiblyTrue = (line: Line): boolean => {
-  const permutations = generatePermutationsOfLength(['+', '*'] as const, line.equation.length - 1);
+const isPossiblyTrue = (line: Line, operators: Set<Operator>): boolean => {
+  const permutations = generatePermutationsOfLength([...operators], line.equation.length - 1);
   const expected = line.value;
   for (const operators of permutations) {
     let actual = line.equation[0];
@@ -35,6 +49,9 @@ const isPossiblyTrue = (line: Line): boolean => {
         case '*': {
           actual *= line.equation[i];
           break;
+        }
+        case '||': {
+          actual = parseInt(`${actual}${line.equation[i]}`, 10);
         }
       }
     }
@@ -64,52 +81,4 @@ const getPermutationAt = <T>(index: number, array: Array<T>, length: number): Ar
     index = Math.floor(index / array.length);
   }
   return permutation;
-};
-
-export const getPartTwoSolution = (input: string): string => {
-  const lines: Array<Line> = input.split('\n').map((line) => {
-    const split = line.split(':').map((v) => v.trim());
-    const value = parseInt(split[0], 10);
-    const equation = split[1].split(' ').map((v) => parseInt(v, 10));
-    return {
-      value,
-      equation,
-    };
-  });
-
-  const possiblyTrueEquations = lines.filter((line) => isPossiblyTruePart2(line));
-  const totalCalibrationResult = sumArrayBy(possiblyTrueEquations, (equation) => equation.value);
-  return totalCalibrationResult.toString();
-};
-
-const isPossiblyTruePart2 = (line: Line): boolean => {
-  const permutations = generatePermutationsOfLength(
-    ['+', '*', '||'] as const,
-    line.equation.length - 1
-  );
-  const expected = line.value;
-  for (const operators of permutations) {
-    let actual = line.equation[0];
-    for (let i = 1; i < line.equation.length; i++) {
-      switch (operators[i - 1]) {
-        case '+': {
-          actual += line.equation[i];
-          break;
-        }
-        case '*': {
-          actual *= line.equation[i];
-          break;
-        }
-        case '||': {
-          actual = parseInt(`${actual}${line.equation[i]}`, 10);
-        }
-      }
-    }
-
-    if (actual === expected) {
-      return true;
-    }
-  }
-
-  return false;
 };
