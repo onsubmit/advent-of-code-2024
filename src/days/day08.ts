@@ -1,41 +1,23 @@
+import { forEach2dArray } from '../arrayMethods';
 import { Coordinate } from '../coordinate';
 import { inputTo2dArray } from '../inputHelper';
-
-type Position = {
-  signal: string;
-  hasAntinode: boolean;
-};
+import { StringSet } from '../stringSet';
 
 export const getPartOneSolution = (input: string): string => {
-  const signals: Map<string, Array<Coordinate>> = new Map();
-  const positions: Array<Array<Position>> = inputTo2dArray(input, '', (char, row, column) => {
-    if (char !== '.') {
-      if (signals.has(char)) {
-        signals.get(char)!.push(new Coordinate(row, column));
-      } else {
-        signals.set(char, [new Coordinate(row, column)]);
-      }
-    }
+  const signals: Map<string, StringSet<Coordinate>> = new Map();
+  const antinodeCoordinates = new StringSet<Coordinate>();
+  const positions = inputTo2dArray(input, '', (char) => char);
 
-    return {
-      signal: char,
-      hasAntinode: false,
-    };
+  forEach2dArray(positions, (char, row, column) => {
+    if (char !== '.') {
+      if (!signals.has(char)) {
+        signals.set(char, new StringSet());
+      }
+
+      signals.get(char)!.add(new Coordinate(row, column));
+    }
   });
 
-  function isValidCoordinate(c: Coordinate): boolean {
-    if (c.row < 0 || c.column < 0) {
-      return false;
-    }
-
-    if (c.row >= positions.length || c.column >= positions[c.row].length) {
-      return false;
-    }
-
-    return true;
-  }
-
-  let numAntinodes = 0;
   for (const coordinates of signals.values()) {
     for (const a of coordinates) {
       for (const b of coordinates) {
@@ -44,59 +26,36 @@ export const getPartOneSolution = (input: string): string => {
         }
 
         const distance = a.minus(b);
-        const antinodes = [a.plus(distance), b.minus(distance)].filter(isValidCoordinate);
+        const antinodes = [a.plus(distance), b.minus(distance)].filter(
+          (c) => positions[c.row]?.[c.column] !== undefined
+        );
         for (const antinode of antinodes) {
-          const { hasAntinode } = positions[antinode.row][antinode.column];
-          if (!hasAntinode) {
-            numAntinodes++;
-          }
-          positions[antinode.row][antinode.column].hasAntinode = true;
+          antinodeCoordinates.add(antinode);
         }
       }
     }
   }
 
-  return numAntinodes.toString();
+  return antinodeCoordinates.size.toString();
 };
 
 export const getPartTwoSolution = (input: string): string => {
-  const signals: Map<string, Array<Coordinate>> = new Map();
-  const positions: Array<Array<Position>> = inputTo2dArray(input, '', (char, row, column) => {
-    if (char !== '.' && char !== '#') {
-      if (signals.has(char)) {
-        signals.get(char)!.push(new Coordinate(row, column));
-      } else {
-        signals.set(char, [new Coordinate(row, column)]);
-      }
-    }
+  const signals: Map<string, StringSet<Coordinate>> = new Map();
+  const antinodeCoordinates = new StringSet<Coordinate>();
+  const positions = inputTo2dArray(input, '', (char) => char);
 
-    return {
-      signal: char,
-      hasAntinode: false,
-    };
+  forEach2dArray(positions, (char, row, column) => {
+    if (char !== '.') {
+      if (!signals.has(char)) {
+        signals.set(char, new StringSet());
+      }
+
+      signals.get(char)!.add(new Coordinate(row, column));
+    }
   });
 
-  function isValidCoordinate(c: Coordinate): boolean {
-    if (c.row < 0 || c.column < 0) {
-      return false;
-    }
-
-    if (c.row >= positions.length || c.column >= positions[c.row].length) {
-      return false;
-    }
-
-    return true;
-  }
-
-  let numAntinodes = 0;
   for (const coordinates of signals.values()) {
     for (const a of coordinates) {
-      const { hasAntinode } = positions[a.row][a.column];
-      if (!hasAntinode) {
-        numAntinodes++;
-      }
-      positions[a.row][a.column].hasAntinode = true;
-
       for (const b of coordinates) {
         if (a === b) {
           continue;
@@ -105,35 +64,19 @@ export const getPartTwoSolution = (input: string): string => {
         const distance = a.minus(b);
 
         let c = a;
-        while (true) {
+        while (positions[c.row]?.[c.column] !== undefined) {
+          antinodeCoordinates.add(c);
           c = c.plus(distance);
-          if (!isValidCoordinate(c)) {
-            break;
-          }
-
-          const { hasAntinode } = positions[c.row][c.column];
-          if (!hasAntinode) {
-            numAntinodes++;
-          }
-          positions[c.row][c.column].hasAntinode = true;
         }
 
         c = b;
-        while (true) {
+        while (positions[c.row]?.[c.column] !== undefined) {
+          antinodeCoordinates.add(c);
           c = c.minus(distance);
-          if (!isValidCoordinate(c)) {
-            break;
-          }
-
-          const { hasAntinode } = positions[c.row][c.column];
-          if (!hasAntinode) {
-            numAntinodes++;
-          }
-          positions[c.row][c.column].hasAntinode = true;
         }
       }
     }
   }
 
-  return numAntinodes.toString();
+  return antinodeCoordinates.size.toString();
 };
