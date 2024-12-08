@@ -1,22 +1,32 @@
-export type Coordinate = { row: number; column: number };
+export const directions = ['N', 'E', 'S', 'W'] as const;
+export type Direction = (typeof directions)[number];
+export class Coordinate {
+  row: number;
+  column: number;
 
-export const getDistance = (a: Coordinate, b: Coordinate): Coordinate => {
-  return {
-    row: a.row - b.row,
-    column: a.column - b.column,
-  };
-};
+  constructor(row: number, column: number) {
+    this.row = row;
+    this.column = column;
+  }
 
-export const invert = (c: Coordinate): Coordinate => {
-  return {
-    row: 0 - c.row,
-    column: 0 - c.column,
+  plus = (c: Coordinate): Coordinate => new Coordinate(this.row + c.row, this.column + c.column);
+  minus = (c: Coordinate): Coordinate => new Coordinate(this.row - c.row, this.column - c.column);
+  toString = (): string => `${this.row},${this.column}`;
+  move = (direction: Direction): Coordinate => {
+    const { row, column } = this;
+    switch (direction) {
+      case 'N': {
+        return new Coordinate(row - 1, column);
+      }
+      case 'E': {
+        return new Coordinate(row, column + 1);
+      }
+      case 'S': {
+        return new Coordinate(row + 1, column);
+      }
+      case 'W': {
+        return new Coordinate(row, column - 1);
+      }
+    }
   };
-};
-
-export const add = (a: Coordinate, b: Coordinate): Coordinate => {
-  return {
-    row: a.row + b.row,
-    column: a.column + b.column,
-  };
-};
+}

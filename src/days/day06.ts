@@ -1,13 +1,10 @@
-import { Coordinate } from '../coordinate';
-
-const directions = ['N', 'E', 'S', 'W'] as const;
-type Direction = (typeof directions)[number];
+import { Coordinate, Direction, directions } from '../coordinate';
 
 export const getPartOneSolution = (input: string): string => {
   const lines = input.split('\n');
   const map: Array<Array<string>> = [];
 
-  let guard: Coordinate = { row: -1, column: -1 };
+  let guard = new Coordinate(-1, -1);
   for (let row = 0; row < lines.length; row++) {
     const chars = [...lines[row]];
     map.push(chars);
@@ -36,14 +33,14 @@ export const getPartOneSolution = (input: string): string => {
   while (isValidCoordinate(guard)) {
     map[guard.row][guard.column] = 'X';
     let direction = directions[directionIndex % directions.length];
-    let next = move(guard, direction);
+    let next = guard.move(direction);
     if (!isValidCoordinate(next)) {
       break;
     }
 
     while (map[next.row][next.column] === '#') {
       direction = directions[++directionIndex % directions.length];
-      next = move(guard, direction);
+      next = guard.move(direction);
     }
 
     guard = next;
@@ -54,41 +51,11 @@ export const getPartOneSolution = (input: string): string => {
   return pathLength.toString();
 };
 
-const move = (c: Coordinate, direction: Direction): Coordinate => {
-  const { row, column } = c;
-  switch (direction) {
-    case 'N': {
-      return {
-        row: row - 1,
-        column,
-      };
-    }
-    case 'E': {
-      return {
-        row: row,
-        column: column + 1,
-      };
-    }
-    case 'S': {
-      return {
-        row: row + 1,
-        column,
-      };
-    }
-    case 'W': {
-      return {
-        row: row,
-        column: column - 1,
-      };
-    }
-  }
-};
-
 export const getPartTwoSolution = (input: string): string => {
   const lines = input.split('\n');
   const map: Array<Array<string>> = [];
 
-  const originalGuard: Coordinate = { row: -1, column: -1 };
+  const originalGuard = new Coordinate(-1, -1);
   for (let row = 0; row < lines.length; row++) {
     const chars = [...lines[row]];
     map.push(chars);
@@ -123,30 +90,30 @@ export const getPartTwoSolution = (input: string): string => {
 
       m[r][c] = '#';
 
-      let guard = { ...originalGuard };
+      let guard = new Coordinate(originalGuard.row, originalGuard.column);
       const path: Map<string, Direction> = new Map();
       path.set(`${guard.row},${guard.column}`, 'N');
 
       let directionIndex = 0;
       while (isValidCoordinate(guard)) {
         let direction = directions[directionIndex % directions.length];
-        let next = move(guard, direction);
+        let next = guard.move(direction);
         if (!isValidCoordinate(next)) {
           break;
         }
 
         while (m[next.row][next.column] === '#') {
           direction = directions[++directionIndex % directions.length];
-          next = move(guard, direction);
+          next = guard.move(direction);
         }
 
         guard = next;
-        if (path.get(`${guard.row},${guard.column}`) === direction) {
+        if (path.get(guard.toString())! === direction) {
           loops++;
           break;
         }
 
-        path.set(`${guard.row},${guard.column}`, direction);
+        path.set(guard.toString(), direction);
         m[guard.row][guard.column] = 'X';
       }
     }

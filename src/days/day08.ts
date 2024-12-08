@@ -1,4 +1,4 @@
-import { add, Coordinate, getDistance, invert } from '../coordinate';
+import { Coordinate } from '../coordinate';
 import { inputTo2dArray } from '../inputHelper';
 
 type Position = {
@@ -11,9 +11,9 @@ export const getPartOneSolution = (input: string): string => {
   const positions: Array<Array<Position>> = inputTo2dArray(input, '', (char, row, column) => {
     if (char !== '.') {
       if (signals.has(char)) {
-        signals.get(char)!.push({ row, column });
+        signals.get(char)!.push(new Coordinate(row, column));
       } else {
-        signals.set(char, [{ row, column }]);
+        signals.set(char, [new Coordinate(row, column)]);
       }
     }
 
@@ -43,8 +43,8 @@ export const getPartOneSolution = (input: string): string => {
           continue;
         }
 
-        const distance = getDistance(a, b);
-        const antinodes = [add(a, distance), add(b, invert(distance))].filter(isValidCoordinate);
+        const distance = a.minus(b);
+        const antinodes = [a.plus(distance), b.minus(distance)].filter(isValidCoordinate);
         for (const antinode of antinodes) {
           const { hasAntinode } = positions[antinode.row][antinode.column];
           if (!hasAntinode) {
@@ -64,9 +64,9 @@ export const getPartTwoSolution = (input: string): string => {
   const positions: Array<Array<Position>> = inputTo2dArray(input, '', (char, row, column) => {
     if (char !== '.' && char !== '#') {
       if (signals.has(char)) {
-        signals.get(char)!.push({ row, column });
+        signals.get(char)!.push(new Coordinate(row, column));
       } else {
-        signals.set(char, [{ row, column }]);
+        signals.set(char, [new Coordinate(row, column)]);
       }
     }
 
@@ -102,11 +102,11 @@ export const getPartTwoSolution = (input: string): string => {
           continue;
         }
 
-        const distance = getDistance(a, b);
+        const distance = a.minus(b);
 
         let c = a;
         while (true) {
-          c = add(c, distance);
+          c = c.plus(distance);
           if (!isValidCoordinate(c)) {
             break;
           }
@@ -120,7 +120,7 @@ export const getPartTwoSolution = (input: string): string => {
 
         c = b;
         while (true) {
-          c = add(c, invert(distance));
+          c = c.minus(distance);
           if (!isValidCoordinate(c)) {
             break;
           }
