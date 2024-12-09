@@ -1,50 +1,34 @@
 import { CardinalDirection, cardinalDirections, Coordinate } from '../coordinate';
+import { TwoDimensionalArray } from '../twoDimensionalArray';
 
 export const getPartOneSolution = (input: string): string => {
-  const lines = input.split('\n');
-  const map: Array<Array<string>> = [];
-
   let guard = new Coordinate(-1, -1);
-  for (let row = 0; row < lines.length; row++) {
-    const chars = [...lines[row]];
-    map.push(chars);
-
-    const guardCol = chars.indexOf('^');
-    if (guardCol >= 0) {
-      guard.row = row;
-      guard.column = guardCol;
-    }
-  }
-
-  function isValidCoordinate(c: Coordinate): boolean {
-    if (c.row < 0 || c.column < 0) {
-      return false;
+  const map = new TwoDimensionalArray(input, (char, r, c) => {
+    if (char === '^') {
+      guard.row = r;
+      guard.column = c;
     }
 
-    if (c.row >= map.length || c.column >= map[c.row].length) {
-      return false;
-    }
-
-    return true;
-  }
+    return char;
+  });
 
   let directionIndex = 0;
-  let pathLength = 1;
-  while (isValidCoordinate(guard)) {
-    map[guard.row][guard.column] = 'X';
+  let pathLength = 0;
+  while (map.atCoordinate(guard) !== undefined) {
+    map.setCoordinate(guard, 'X');
     let direction = cardinalDirections[directionIndex % cardinalDirections.length];
     let next = guard.move(direction);
-    if (!isValidCoordinate(next)) {
+    if (map.atCoordinate(guard) === undefined) {
       break;
     }
 
-    while (map[next.row][next.column] === '#') {
+    while (map.atCoordinate(next) === '#') {
       direction = cardinalDirections[++directionIndex % cardinalDirections.length];
       next = guard.move(direction);
     }
 
     guard = next;
-    if (map[guard.row][guard.column] !== 'X') {
+    if (map.atCoordinate(guard) !== 'X') {
       pathLength++;
     }
   }
@@ -52,72 +36,52 @@ export const getPartOneSolution = (input: string): string => {
 };
 
 export const getPartTwoSolution = (input: string): string => {
-  const lines = input.split('\n');
-  const map: Array<Array<string>> = [];
-
   const originalGuard = new Coordinate(-1, -1);
-  for (let row = 0; row < lines.length; row++) {
-    const chars = [...lines[row]];
-    map.push(chars);
-
-    const guardCol = chars.indexOf('^');
-    if (guardCol >= 0) {
-      originalGuard.row = row;
-      originalGuard.column = guardCol;
-    }
-  }
-
-  function isValidCoordinate(c: Coordinate): boolean {
-    if (c.row < 0 || c.column < 0) {
-      return false;
+  const map = new TwoDimensionalArray(input, (char, r, c) => {
+    if (char === '^') {
+      originalGuard.row = r;
+      originalGuard.column = c;
     }
 
-    if (c.row >= map.length || c.column >= map[c.row].length) {
-      return false;
-    }
-
-    return true;
-  }
+    return char;
+  });
 
   let loops = 0;
-  for (let r = 0; r < map.length; r++) {
-    console.log(r);
-    for (let c = 0; c < map[r].length; c++) {
-      const m = [...map].map((x) => [...x]);
-      if (m[r][c] !== '.') {
-        continue;
-      }
-
-      m[r][c] = '#';
-
-      let guard = new Coordinate(originalGuard.row, originalGuard.column);
-      const path: Map<string, CardinalDirection> = new Map();
-      path.set(`${guard.row},${guard.column}`, 'N');
-
-      let directionIndex = 0;
-      while (isValidCoordinate(guard)) {
-        let direction = cardinalDirections[directionIndex % cardinalDirections.length];
-        let next = guard.move(direction);
-        if (!isValidCoordinate(next)) {
-          break;
-        }
-
-        while (m[next.row][next.column] === '#') {
-          direction = cardinalDirections[++directionIndex % cardinalDirections.length];
-          next = guard.move(direction);
-        }
-
-        guard = next;
-        if (path.get(guard.toString())! === direction) {
-          loops++;
-          break;
-        }
-
-        path.set(guard.toString(), direction);
-        m[guard.row][guard.column] = 'X';
-      }
+  map.forEach((item, r, c) => {
+    const m = map.clone();
+    if (item !== '.') {
+      return;
     }
-  }
+
+    m.set(r, c, '#');
+
+    let guard = originalGuard.clone();
+    const path: Map<string, CardinalDirection> = new Map();
+    path.set(`${guard.row},${guard.column}`, 'N');
+
+    let directionIndex = 0;
+    while (m.atCoordinate(guard) !== undefined) {
+      let direction = cardinalDirections[directionIndex % cardinalDirections.length];
+      let next = guard.move(direction);
+      if (m.atCoordinate(next) === undefined) {
+        break;
+      }
+
+      while (m.atCoordinate(next) === '#') {
+        direction = cardinalDirections[++directionIndex % cardinalDirections.length];
+        next = guard.move(direction);
+      }
+
+      guard = next;
+      if (path.get(guard.toString())! === direction) {
+        loops++;
+        break;
+      }
+
+      path.set(guard.toString(), direction);
+      m.setCoordinate(guard, 'X');
+    }
+  });
 
   return loops.toString();
 };
