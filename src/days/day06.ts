@@ -1,4 +1,5 @@
 import { CardinalDirection, cardinalDirections, Coordinate } from '../coordinate';
+import { StringMap } from '../stringMap';
 import { TwoDimensionalArray } from '../twoDimensionalArray';
 
 export const getPartOneSolution = (input: string): string => {
@@ -56,8 +57,8 @@ export const getPartTwoSolution = (input: string): string => {
     m.set(r, c, '#');
 
     let guard = originalGuard.clone();
-    const path: Map<string, CardinalDirection> = new Map();
-    path.set(`${guard.row},${guard.column}`, 'N');
+    const path = new StringMap<Coordinate, CardinalDirection>();
+    path.set(guard, 'N');
 
     let directionIndex = 0;
     while (m.atCoordinate(guard) !== undefined) {
@@ -73,12 +74,12 @@ export const getPartTwoSolution = (input: string): string => {
       }
 
       guard = next;
-      if (path.get(guard.toString())! === direction) {
+      if (path.get(guard) === direction) {
         loops++;
         break;
       }
 
-      path.set(guard.toString(), direction);
+      path.set(guard, direction);
       m.setCoordinate(guard, 'X');
     }
   });

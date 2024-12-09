@@ -1,7 +1,7 @@
 export class StringMap<K extends { toString: () => string }, V> {
   private _stringMap: Map<string, V>;
 
-  constructor(map: Map<K, V>) {
+  constructor(map: Map<K, V> = new Map()) {
     this._stringMap = new Map<string, V>(
       [...map.entries()].map(([key, value]) => [key.toString(), value])
     );
