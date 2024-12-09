@@ -1,4 +1,4 @@
-import { Coordinate, Direction, directions } from '../coordinate';
+import { CardinalDirection, cardinalDirections, Coordinate } from '../coordinate';
 
 export const getPartOneSolution = (input: string): string => {
   const lines = input.split('\n');
@@ -32,14 +32,14 @@ export const getPartOneSolution = (input: string): string => {
   let pathLength = 1;
   while (isValidCoordinate(guard)) {
     map[guard.row][guard.column] = 'X';
-    let direction = directions[directionIndex % directions.length];
+    let direction = cardinalDirections[directionIndex % cardinalDirections.length];
     let next = guard.move(direction);
     if (!isValidCoordinate(next)) {
       break;
     }
 
     while (map[next.row][next.column] === '#') {
-      direction = directions[++directionIndex % directions.length];
+      direction = cardinalDirections[++directionIndex % cardinalDirections.length];
       next = guard.move(direction);
     }
 
@@ -91,19 +91,19 @@ export const getPartTwoSolution = (input: string): string => {
       m[r][c] = '#';
 
       let guard = new Coordinate(originalGuard.row, originalGuard.column);
-      const path: Map<string, Direction> = new Map();
+      const path: Map<string, CardinalDirection> = new Map();
       path.set(`${guard.row},${guard.column}`, 'N');
 
       let directionIndex = 0;
       while (isValidCoordinate(guard)) {
-        let direction = directions[directionIndex % directions.length];
+        let direction = cardinalDirections[directionIndex % cardinalDirections.length];
         let next = guard.move(direction);
         if (!isValidCoordinate(next)) {
           break;
         }
 
         while (m[next.row][next.column] === '#') {
-          direction = directions[++directionIndex % directions.length];
+          direction = cardinalDirections[++directionIndex % cardinalDirections.length];
           next = guard.move(direction);
         }
 

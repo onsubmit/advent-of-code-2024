@@ -8,10 +8,3 @@ export const sortArray = (arr: number[]) => arr.sort((a, b) => a - b);
 
 export const countArrayBy = <T>(arr: T[], fn: (v: T, i: number) => boolean): number =>
   arr.reduce((acc, a, i) => (fn(a, i) ? acc + 1 : acc), 0);
-
-export const forEach2dArray = <T>(
-  array: Array<Array<T>>,
-  fn: (item: T, row: number, column: number) => void
-): void => {
-  array.forEach((items, row) => items.forEach((item, column) => fn(item, row, column)));
-};

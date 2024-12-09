@@ -1,9 +1,10 @@
-import { countArrayBy } from '../arrayMethods';
-import { inputTo2dArray } from '../inputHelper';
+import { TwoDimensionalArray } from '../twoDimensionalArray';
 
 export const getPartOneSolution = (input: string): string => {
-  const array = inputTo2dArray(input, ' ', (char) => parseInt(char, 10));
-  return countArrayBy(array, isLineSafePartOne).toString();
+  const array = new TwoDimensionalArray(input, (char) => parseInt(char, 10), {
+    columnSplitter: ' ',
+  });
+  return array.countByRow(isLineSafePartOne).toString();
 };
 
 const isLineSafePartOne = (line: Array<number>): boolean => {
@@ -24,8 +25,10 @@ const isLineSafePartOne = (line: Array<number>): boolean => {
 };
 
 export const getPartTwoSolution = (input: string): string => {
-  const array = inputTo2dArray(input, ' ', (char) => parseInt(char, 10));
-  return countArrayBy(array, isLineSafePartTwo).toString();
+  const array = new TwoDimensionalArray(input, (char) => parseInt(char, 10), {
+    columnSplitter: ' ',
+  });
+  return array.countByRow(isLineSafePartTwo).toString();
 };
 
 const isLineSafePartTwo = (line: Array<number>): boolean => {
