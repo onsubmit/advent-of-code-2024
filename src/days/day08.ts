@@ -1,14 +1,13 @@
-import { forEach2dArray } from '../arrayMethods';
 import { Coordinate } from '../coordinate';
-import { inputTo2dArray } from '../inputHelper';
 import { StringSet } from '../stringSet';
+import { TwoDimensionalArray } from '../twoDimensionalArray';
 
 export const getPartOneSolution = (input: string): string => {
   const signals: Map<string, StringSet<Coordinate>> = new Map();
   const antinodeCoordinates = new StringSet<Coordinate>();
-  const positions = inputTo2dArray(input, '', (char) => char);
+  const positions = new TwoDimensionalArray(input, (c) => c);
 
-  forEach2dArray(positions, (char, row, column) => {
+  positions.forEach((char, row, column) => {
     if (char !== '.') {
       if (!signals.has(char)) {
         signals.set(char, new StringSet());
@@ -27,7 +26,7 @@ export const getPartOneSolution = (input: string): string => {
 
         const distance = a.minus(b);
         const antinodes = [a.plus(distance), b.minus(distance)].filter(
-          (c) => positions[c.row]?.[c.column] !== undefined
+          (c) => positions.atCoordinate(c) !== undefined
         );
         for (const antinode of antinodes) {
           antinodeCoordinates.add(antinode);
@@ -42,9 +41,9 @@ export const getPartOneSolution = (input: string): string => {
 export const getPartTwoSolution = (input: string): string => {
   const signals: Map<string, StringSet<Coordinate>> = new Map();
   const antinodeCoordinates = new StringSet<Coordinate>();
-  const positions = inputTo2dArray(input, '', (char) => char);
+  const positions = new TwoDimensionalArray(input, (c) => c);
 
-  forEach2dArray(positions, (char, row, column) => {
+  positions.forEach((char, row, column) => {
     if (char !== '.') {
       if (!signals.has(char)) {
         signals.set(char, new StringSet());
@@ -64,13 +63,13 @@ export const getPartTwoSolution = (input: string): string => {
         const distance = a.minus(b);
 
         let c = a;
-        while (positions[c.row]?.[c.column] !== undefined) {
+        while (positions.atCoordinate(c) !== undefined) {
           antinodeCoordinates.add(c);
           c = c.plus(distance);
         }
 
         c = b;
-        while (positions[c.row]?.[c.column] !== undefined) {
+        while (positions.atCoordinate(c) !== undefined) {
           antinodeCoordinates.add(c);
           c = c.minus(distance);
         }
