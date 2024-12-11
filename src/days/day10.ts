@@ -3,6 +3,14 @@ import { StringMap } from '../stringMap';
 import { TwoDimensionalArray } from '../twoDimensionalArray';
 
 export const getPartOneSolution = (input: string): string => {
+  return getNumPaths(input, false).toString();
+};
+
+export const getPartTwoSolution = (input: string): string => {
+  return getNumPaths(input, true).toString();
+};
+
+const getNumPaths = (input: string, distinct: boolean): number => {
   const graph = new Graph();
 
   const matrix = new TwoDimensionalArray(input, Number);
@@ -39,15 +47,12 @@ export const getPartOneSolution = (input: string): string => {
   let paths: Array<Array<Coordinate>> = [];
   for (const start of starts) {
     for (const end of ends) {
-      const newPaths = graph.findPaths(start, end);
+      const newPaths = graph.findPaths(start, end, distinct);
       paths = [...paths, ...newPaths];
     }
   }
-  return paths.length.toString();
-};
 
-export const getPartTwoSolution = (input: string): string => {
-  return '';
+  return paths.length;
 };
 
 class Graph {
@@ -65,7 +70,7 @@ class Graph {
     }
   };
 
-  findPaths = (start: Coordinate, end: Coordinate): Array<Array<Coordinate>> => {
+  findPaths = (start: Coordinate, end: Coordinate, distinct = false): Array<Array<Coordinate>> => {
     const paths: Array<Array<Coordinate>> = [];
     const queue: Array<Array<Coordinate>> = [];
 
@@ -78,7 +83,9 @@ class Graph {
       const last = path.at(-1)!;
       if (last.equals(end)) {
         paths.push(path);
-        break;
+        if (!distinct) {
+          break;
+        }
       }
 
       const lastAdjacent = this._adjacent.get(last);
