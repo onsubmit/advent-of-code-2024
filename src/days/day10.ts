@@ -3,11 +3,11 @@ import { StringMap } from '../stringMap';
 import { TwoDimensionalArray } from '../twoDimensionalArray';
 
 export const getPartOneSolution = (input: string): string => {
-  return getNumPaths(input, false).toString();
+  return getNumPaths(input, true).toString();
 };
 
 export const getPartTwoSolution = (input: string): string => {
-  return getNumPaths(input, true).toString();
+  return getNumPaths(input, false).toString();
 };
 
 const getNumPaths = (input: string, distinct: boolean): number => {
@@ -83,7 +83,7 @@ class Graph {
       const last = path.at(-1)!;
       if (last.equals(end)) {
         paths.push(path);
-        if (!distinct) {
+        if (distinct) {
           break;
         }
       }
