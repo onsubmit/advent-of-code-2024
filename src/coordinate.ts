@@ -19,6 +19,8 @@ export class Coordinate {
     return new Coordinate(this.row, this.column);
   };
 
+  equals = (c: Coordinate) => this.row === c.row && this.column === c.column;
+
   plus = (c: Coordinate): Coordinate => new Coordinate(this.row + c.row, this.column + c.column);
   minus = (c: Coordinate): Coordinate => new Coordinate(this.row - c.row, this.column - c.column);
   toString = (): string => `${this.row},${this.column}`;
