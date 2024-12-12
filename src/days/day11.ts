@@ -57,5 +57,42 @@ const getNumStones = (root: Stone): number => {
 };
 
 export const getPartTwoSolution = (input: string): string => {
-  return '';
+  const stones = input.split(' ').map(Number);
+  const cache: Map<string, number> = new Map();
+
+  let blinked = 0;
+  for (const stone of stones) {
+    blinked += blinkStone(stone, 75, cache);
+  }
+
+  return blinked.toString();
+};
+
+const blinkStone = (stone: number, times: number, cache: Map<string, number>): number => {
+  if (times === 0) {
+    return 1;
+  }
+
+  const key = `${stone},${times}`;
+  const cached = cache.get(key);
+  if (cached) {
+    return cached;
+  }
+
+  let blinked = 0;
+  if (stone === 0) {
+    blinked = blinkStone(1, times - 1, cache);
+  } else {
+    const str = stone.toString();
+    if (str.length % 2 === 0) {
+      blinked =
+        blinkStone(parseInt(str.substring(0, str.length / 2), 10), times - 1, cache) +
+        blinkStone(parseInt(str.substring(str.length / 2, str.length), 10), times - 1, cache);
+    } else {
+      blinked = blinkStone(stone * 2024, times - 1, cache);
+    }
+  }
+
+  cache.set(key, blinked);
+  return blinked;
 };
