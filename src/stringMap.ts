@@ -7,6 +7,9 @@ export class StringMap<K extends { toString: () => string }, V> {
     );
   }
 
+  values = () => this._stringMap.values();
+  entries = () => this._stringMap.entries();
+
   has = (key: K): boolean => this._stringMap.has(key.toString());
   get = (key: K): V | undefined => this._stringMap.get(key.toString());
   set = (key: K, value: V): Map<string, V> => {
