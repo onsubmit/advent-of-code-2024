@@ -1,5 +1,5 @@
 export const getPartOneSolution = (input: string): string => {
-  const lines = input.split('\n').filter((line) => line);
+  const lines = input.split('\n').filter(Boolean);
   const chunkSize = 3;
   let cost = 0;
   for (let i = 0; i < lines.length; i += chunkSize) {
@@ -15,7 +15,21 @@ export const getPartOneSolution = (input: string): string => {
 };
 
 export const getPartTwoSolution = (input: string): string => {
-  return '';
+  const lines = input.split('\n').filter(Boolean);
+  const chunkSize = 3;
+  let cost = 0;
+  for (let i = 0; i < lines.length; i += chunkSize) {
+    const chunk = lines.slice(i, i + chunkSize);
+    const matrix = new Matrix(chunk);
+    matrix.px += 10000000000000;
+    matrix.py += 10000000000000;
+    const { a, b } = matrix.solve();
+    if (Number.isInteger(a) && Number.isInteger(b)) {
+      cost += 3 * a + b;
+    }
+  }
+
+  return cost.toString();
 };
 
 class Matrix {
