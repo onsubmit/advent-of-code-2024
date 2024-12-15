@@ -48,4 +48,6 @@ export class TwoDimensionalArray<T> {
 
   countByRow = (fn: (items: Array<T>, row: number) => boolean): number =>
     countArrayBy(this._array, fn);
+
+  toString = (): string => this._array.map((row) => row.join('')).join('\n');
 }
