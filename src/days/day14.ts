@@ -29,7 +29,31 @@ export const getPartOneSolution = (input: string): string => {
 };
 
 export const getPartTwoSolution = (input: string): string => {
-  return '';
+  const width = 101;
+  const height = 103;
+  const robots = input.split('\n').map((line) => new Robot(line, width, height));
+
+  let seconds = 0;
+  while (seconds < 10000) {
+    robots.forEach((robot) => robot.move(1));
+    seconds++;
+
+    for (let y = 0; y < height; y++) {
+      const row = robots
+        .filter((r) => r.y === y)
+        .reduce((acc, curr) => {
+          acc[curr.x] = '*';
+          return acc;
+        }, Array<string>(width).fill(' '))
+        .join('');
+
+      if (row.includes('**********')) {
+        return seconds.toString();
+      }
+    }
+  }
+
+  throw new Error('No solution');
 };
 
 class Robot {
