@@ -68,6 +68,6 @@ const getRegionFor = (
   }
 };
 
-export const getPartTwoSolution = (input: string): string => {
+export const getPartTwoSolution = (_input: string): string => {
   return '';
 };
